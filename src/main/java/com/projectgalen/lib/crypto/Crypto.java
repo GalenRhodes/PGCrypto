@@ -1,5 +1,6 @@
 package com.projectgalen.lib.crypto;
 
+import com.projectgalen.lib.utils.PGProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +18,11 @@ import java.util.Base64;
 @SuppressWarnings("unused")
 public class Crypto {
 
+    private static final PGProperties props                    = PGProperties.getSharedInstanceForNamedResource("settings.properties", Crypto.class);
+    public static final  String       AES_ALGORITHM            = props.getProperty("crypto.aes.algorithm");
+    public static final  String       BOUNCY_CASTLE_PROVIDER   = props.getProperty("crypto.bouncy-castle.provider");
+    public static final  String       DIFFIE_HELLMAN_ALGORITHM = props.getProperty("crypto.diffie-hellman.algorithm");
+
     public static byte[] createSecretKeyDigestFromBytes(byte[] secretBytes) throws NoSuchAlgorithmException {
         return MessageDigest.getInstance("SHA-256").digest(secretBytes);
     }
@@ -28,7 +34,7 @@ public class Crypto {
 
     @NotNull
     public static SecretKeySpec createSecretKeyFromDigest(byte[] digest) {
-        return new SecretKeySpec(digest, "AES");
+        return new SecretKeySpec(digest, AES_ALGORITHM);
     }
 
     @NotNull
@@ -46,7 +52,8 @@ public class Crypto {
     }
 
     public static byte[] createSharedSecretDigest(@NotNull PrivateKey privateKey, byte[] publicKeyBytes) throws Exception {
-        return createSharedSecretDigest(privateKey, KeyFactory.getInstance("DH", "BC").generatePublic(new X509EncodedKeySpec(publicKeyBytes)));
+        KeyFactory keyFactory = KeyFactory.getInstance(DIFFIE_HELLMAN_ALGORITHM, BOUNCY_CASTLE_PROVIDER);
+        return createSharedSecretDigest(privateKey, keyFactory.generatePublic(new X509EncodedKeySpec(publicKeyBytes)));
     }
 
     public static byte[] createSharedSecretDigest(@NotNull PrivateKey privateKey, @NotNull PublicKey publicKey) throws Exception {
@@ -110,14 +117,14 @@ public class Crypto {
 
     @NotNull
     public static KeyPair generateKeyPair() throws Exception {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DH", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance(DIFFIE_HELLMAN_ALGORITHM, BOUNCY_CASTLE_PROVIDER);
         keyGen.initialize(2048);
         return keyGen.genKeyPair();
     }
 
     @NotNull
     public static SecretKey generateSecretKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(AES_ALGORITHM);
         keyGenerator.init(256);
         return keyGenerator.generateKey();
     }
@@ -134,13 +141,13 @@ public class Crypto {
 
     @NotNull
     public static KeyAgreement getKeyAgreement(@NotNull PrivateKey privateKey) throws Exception {
-        KeyAgreement keyAgree = KeyAgreement.getInstance("DH", "BC");
+        KeyAgreement keyAgree = KeyAgreement.getInstance(DIFFIE_HELLMAN_ALGORITHM, BOUNCY_CASTLE_PROVIDER);
         keyAgree.init(privateKey);
         return keyAgree;
     }
 
     public static Provider getProvider() {
-        return Security.getProvider("BC");
+        return Security.getProvider(BOUNCY_CASTLE_PROVIDER);
     }
 
     public static byte[] getRandom(int size) {
