@@ -18,10 +18,16 @@ import java.util.Base64;
 @SuppressWarnings("unused")
 public class Crypto {
 
-    private static final PGProperties props                    = PGProperties.getSharedInstanceForNamedResource("settings.properties", Crypto.class);
-    public static final  String       AES_ALGORITHM            = props.getProperty("crypto.aes.algorithm");
-    public static final  String       BOUNCY_CASTLE_PROVIDER   = props.getProperty("crypto.bouncy-castle.provider");
-    public static final  String       DIFFIE_HELLMAN_ALGORITHM = props.getProperty("crypto.diffie-hellman.algorithm");
+    private static final PGProperties props = PGProperties.getSharedInstanceForNamedResource("crypto_settings.properties", Crypto.class);
+
+    public static final int    AES_KEY_LENGTH             = props.getIntProperty("crypto.aes.key_length");
+    public static final int    DIFFIE_HELLMAN_KEY_LENGTH  = props.getIntProperty("crypto.diffie_hellmah.key_length");
+    public static final int    IV_LENGTH                  = props.getIntProperty("crypto.iv.length");
+    public static final String AES_ALGORITHM              = props.getProperty("crypto.aes.algorithm");
+    public static final String AES_TRANSFORMATION_NO_IV   = props.getProperty("crypto.aes.transformation.no_iv");
+    public static final String AES_TRANSFORMATION_WITH_IV = props.getProperty("crypto.aes.transformation.with_iv");
+    public static final String BOUNCY_CASTLE_PROVIDER     = props.getProperty("crypto.bouncy-castle.provider");
+    public static final String DIFFIE_HELLMAN_ALGORITHM   = props.getProperty("crypto.diffie_hellman.algorithm");
 
     public static byte[] createSecretKeyDigestFromBytes(byte[] secretBytes) throws NoSuchAlgorithmException {
         return MessageDigest.getInstance("SHA-256").digest(secretBytes);
@@ -69,7 +75,7 @@ public class Crypto {
 
     @NotNull
     public static String decryptData(@NotNull SecretKey secretKey, @NotNull IvParameterSpec iv, byte[] cipherTextData) throws Exception {
-        Cipher c = Cipher.getInstance("AES/OFB/PKCS5Padding");
+        Cipher c = Cipher.getInstance(AES_TRANSFORMATION_WITH_IV);
         c.init(Cipher.DECRYPT_MODE, secretKey, iv);
         return new String(c.doFinal(cipherTextData), StandardCharsets.UTF_8);
     }
@@ -81,7 +87,7 @@ public class Crypto {
 
     @NotNull
     public static String decryptData(@NotNull SecretKey secretKey, byte[] cipherTextData) throws Exception {
-        Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        Cipher c = Cipher.getInstance(AES_TRANSFORMATION_NO_IV);
         c.init(Cipher.DECRYPT_MODE, secretKey);
         return new String(c.doFinal(cipherTextData), StandardCharsets.UTF_8);
     }
@@ -93,7 +99,7 @@ public class Crypto {
 
     @NotNull
     public static String encryptData(@NotNull SecretKey secretKey, @NotNull IvParameterSpec iv, byte[] plainTextData) throws Exception {
-        Cipher c = Cipher.getInstance("AES/OFB/PKCS5Padding");
+        Cipher c = Cipher.getInstance(AES_TRANSFORMATION_WITH_IV);
         c.init(Cipher.ENCRYPT_MODE, secretKey, iv);
         return Base64.getEncoder().encodeToString(c.doFinal(plainTextData));
     }
@@ -105,27 +111,27 @@ public class Crypto {
 
     @NotNull
     public static String encryptData(@NotNull SecretKey secretKey, byte[] plainTextData) throws Exception {
-        Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        Cipher c = Cipher.getInstance(AES_TRANSFORMATION_NO_IV);
         c.init(Cipher.ENCRYPT_MODE, secretKey);
         return Base64.getEncoder().encodeToString(c.doFinal(plainTextData));
     }
 
     @NotNull
     public static IvParameterSpec generateIv() {
-        return new IvParameterSpec(getRandom(16));
+        return new IvParameterSpec(getRandom(IV_LENGTH));
     }
 
     @NotNull
     public static KeyPair generateKeyPair() throws Exception {
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance(DIFFIE_HELLMAN_ALGORITHM, BOUNCY_CASTLE_PROVIDER);
-        keyGen.initialize(2048);
+        keyGen.initialize(DIFFIE_HELLMAN_KEY_LENGTH);
         return keyGen.genKeyPair();
     }
 
     @NotNull
     public static SecretKey generateSecretKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(AES_ALGORITHM);
-        keyGenerator.init(256);
+        keyGenerator.init(AES_KEY_LENGTH);
         return keyGenerator.generateKey();
     }
 
