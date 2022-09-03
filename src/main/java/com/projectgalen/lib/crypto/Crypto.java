@@ -1,6 +1,7 @@
 package com.projectgalen.lib.crypto;
 
 import com.projectgalen.lib.utils.PGProperties;
+import com.projectgalen.lib.utils.U;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,32 +30,32 @@ public class Crypto {
     public static final String BOUNCY_CASTLE_PROVIDER     = props.getProperty("crypto.bouncy-castle.provider");
     public static final String DIFFIE_HELLMAN_ALGORITHM   = props.getProperty("crypto.diffie_hellman.algorithm");
 
-    public static byte[] createSecretKeyDigestFromBytes(byte[] secretBytes) throws NoSuchAlgorithmException {
+    public static byte[] createSHA256Digest(byte[] secretBytes) throws NoSuchAlgorithmException {
         return MessageDigest.getInstance("SHA-256").digest(secretBytes);
     }
 
-    @NotNull
-    public static SecretKey createSecretKeyFromBytes(byte[] digestBytes) {
-        return createSecretKeyFromDigest(digestBytes);
-    }
-
-    @NotNull
-    public static SecretKeySpec createSecretKeyFromDigest(byte[] digest) {
+    public static @NotNull SecretKeySpec createSecretKeyFromDigest(byte[] digest) {
         return new SecretKeySpec(digest, AES_ALGORITHM);
     }
 
-    @NotNull
-    public static SecretKey createSharedSecret(@NotNull PrivateKey privateKey, @NotNull PublicKey publicKey) throws Exception {
-        return createSecretKeyFromBytes(createSharedSecretDigest(privateKey, publicKey));
+    public static @NotNull SecretKey createSecreteKeyFromDigest(String encDigest) {
+        return createSecretKeyFromDigest(U.base64Decode(encDigest));
     }
 
-    @NotNull
-    public static SecretKey createSharedSecret(@NotNull PrivateKey privateKey, byte[] publicKeyBytes) throws Exception {
-        return createSecretKeyFromBytes(createSharedSecretDigest(privateKey, publicKeyBytes));
+    public static @NotNull SecretKey createSharedSecret(@NotNull PrivateKey privateKey, @NotNull String strPublicKeyEnc) throws Exception {
+        return Crypto.createSecretKeyFromDigest(Crypto.createSharedSecretDigest(privateKey, strPublicKeyEnc));
+    }
+
+    public static @NotNull SecretKey createSharedSecret(@NotNull PrivateKey privateKey, @NotNull PublicKey publicKey) throws Exception {
+        return createSecretKeyFromDigest(createSharedSecretDigest(privateKey, publicKey));
+    }
+
+    public static @NotNull SecretKey createSharedSecret(@NotNull PrivateKey privateKey, byte[] publicKeyBytes) throws Exception {
+        return createSecretKeyFromDigest(createSharedSecretDigest(privateKey, publicKeyBytes));
     }
 
     public static byte[] createSharedSecretDigest(@NotNull PrivateKey privateKey, @NotNull String publicKeyStr) throws Exception {
-        return createSharedSecretDigest(privateKey, Base64.getDecoder().decode(publicKeyStr));
+        return createSharedSecretDigest(privateKey, U.base64Decode(publicKeyStr));
     }
 
     public static byte[] createSharedSecretDigest(@NotNull PrivateKey privateKey, byte[] publicKeyBytes) throws Exception {
@@ -65,12 +66,22 @@ public class Crypto {
     public static byte[] createSharedSecretDigest(@NotNull PrivateKey privateKey, @NotNull PublicKey publicKey) throws Exception {
         KeyAgreement keyAgree = getKeyAgreement(privateKey);
         keyAgree.doPhase(publicKey, true);
-        return createSecretKeyDigestFromBytes(keyAgree.generateSecret());
+        return createSHA256Digest(keyAgree.generateSecret());
+    }
+
+    public static byte[] decryptBytes(@NotNull SecretKey secretKey, byte[] cipherTextData) throws Exception {
+        Cipher c = Cipher.getInstance(AES_TRANSFORMATION_NO_IV);
+        c.init(Cipher.DECRYPT_MODE, secretKey);
+        return c.doFinal(cipherTextData);
+    }
+
+    public static byte[] decryptBytes(@NotNull SecretKey secretKey, @NotNull String cipherText) throws Exception {
+        return decryptBytes(secretKey, U.base64Decode(cipherText));
     }
 
     @NotNull
     public static String decryptData(@NotNull SecretKey secretKey, @NotNull IvParameterSpec iv, @NotNull String cipherText) throws Exception {
-        return decryptData(secretKey, iv, Base64.getDecoder().decode(cipherText));
+        return decryptData(secretKey, iv, U.base64Decode(cipherText));
     }
 
     @NotNull
@@ -82,14 +93,12 @@ public class Crypto {
 
     @NotNull
     public static String decryptData(@NotNull SecretKey secretKey, @NotNull String cipherText) throws Exception {
-        return decryptData(secretKey, Base64.getDecoder().decode(cipherText));
+        return decryptData(secretKey, U.base64Decode(cipherText));
     }
 
     @NotNull
     public static String decryptData(@NotNull SecretKey secretKey, byte[] cipherTextData) throws Exception {
-        Cipher c = Cipher.getInstance(AES_TRANSFORMATION_NO_IV);
-        c.init(Cipher.DECRYPT_MODE, secretKey);
-        return new String(c.doFinal(cipherTextData), StandardCharsets.UTF_8);
+        return new String(decryptBytes(secretKey, cipherTextData), StandardCharsets.UTF_8);
     }
 
     @NotNull
