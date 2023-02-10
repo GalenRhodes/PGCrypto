@@ -19,11 +19,11 @@ import java.util.Base64;
 @SuppressWarnings("unused")
 public final class Crypto {
 
-    private static final PGProperties props = PGProperties.getSharedInstanceForNamedResource("crypto_settings.properties", Crypto.class);
+    private static final PGProperties props = PGProperties.getXMLProperties("crypto_settings.xml", Crypto.class);
 
-    public static final int    AES_KEY_LENGTH             = props.getIntProperty("crypto.aes.key_length");
-    public static final int    DIFFIE_HELLMAN_KEY_LENGTH  = props.getIntProperty("crypto.diffie_hellman.key_length");
-    public static final int    IV_LENGTH                  = props.getIntProperty("crypto.iv.length");
+    public static final int    AES_KEY_LENGTH             = props.getInt("crypto.aes.key_length");
+    public static final int    DIFFIE_HELLMAN_KEY_LENGTH  = props.getInt("crypto.diffie_hellman.key_length");
+    public static final int    IV_LENGTH                  = props.getInt("crypto.iv.length");
     public static final String AES_ALGORITHM              = props.getProperty("crypto.aes.algorithm");
     public static final String AES_TRANSFORMATION_NO_IV   = props.getProperty("crypto.aes.transformation.no_iv");
     public static final String AES_TRANSFORMATION_WITH_IV = props.getProperty("crypto.aes.transformation.with_iv");
@@ -181,7 +181,7 @@ public final class Crypto {
         return keyAgree;
     }
 
-    public static Provider getProvider() {
+    public static @NotNull Provider getProvider() {
         return Security.getProvider(BOUNCY_CASTLE_PROVIDER);
     }
 

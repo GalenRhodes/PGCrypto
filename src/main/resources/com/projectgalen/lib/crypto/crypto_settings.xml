@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <!-- # -->
+    <entry key="crypto.aes.algorithm">AES</entry>
+    <entry key="crypto.aes.key_length">256</entry>
+    <entry key="crypto.aes.transformation.no_iv">AES/ECB/PKCS5Padding</entry>
+    <entry key="crypto.aes.transformation.with_iv">AES/OFB/PKCS5Padding</entry>
+    <entry key="crypto.bouncy-castle.provider">BC</entry>
+    <entry key="crypto.diffie_hellman.key_length">2048</entry>
+    <entry key="crypto.diffie_hellman.algorithm">DH</entry>
+    <entry key="crypto.iv.length">16</entry>
+    <!-- # -->
+</properties>
