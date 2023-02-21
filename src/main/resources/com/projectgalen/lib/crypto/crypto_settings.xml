@@ -11,4 +11,7 @@
     <entry key="crypto.diffie_hellman.algorithm">DH</entry>
     <entry key="crypto.iv.length">16</entry>
     <!-- # -->
+    <entry key="to.str.fmt1">%s: "%s"</entry>
+    <entry key="to.str.fmt2">%s: "%,d"</entry>
+    <!-- # -->
 </properties>

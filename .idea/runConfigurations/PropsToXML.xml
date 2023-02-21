@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PropsToXML" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/../PGBudgetDB/utils/PropertiesToXML-1.0.0.jar" />
+    <option name="PROGRAM_PARAMETERS" value="crypto_messages.properties" />
+    <option name="WORKING_DIRECTORY" value="$ProjectFileDir$/src/main/resources/com/projectgalen/lib/crypto" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2" />
+  </configuration>
+</component>

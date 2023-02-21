@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <!-- # -->
+    <entry key="msg.label.aes_algorithm">AES Algorithm</entry>
+    <entry key="msg.label.aes_key_length">AES Key Length</entry>
+    <entry key="msg.label.aes_transform">AES Transformation</entry>
+    <entry key="msg.label.aes_transform_no_iv">AES Transformation (no IV)</entry>
+    <entry key="msg.label.diffie_hellman_algorithm">Diffie/Hellman Algorithm</entry>
+    <entry key="msg.label.diffie_hellman_key_length">Diffie/Hellman Key Length</entry>
+    <entry key="msg.label.iv_length">IV Length</entry>
+    <entry key="msg.label.provider">Provider</entry>
+    <entry key="msg.label.public_key_info">PublicKeyInfo</entry>
+    <!-- # -->
+    <entry key="to.str.public_key_info">PublicKey: "%s"; IV: "%s"</entry>
+    <!-- # -->
+</properties>
