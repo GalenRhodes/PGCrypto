@@ -21,20 +21,20 @@ public class PublicKeyInfo {
         return ((this == o) || ((o instanceof PublicKeyInfo) && _equals((PublicKeyInfo)o)));
     }
 
-    public @Override int hashCode() {
-        return Objects.hash(publicKey, iv);
-    }
-
-    public @Override String toString() {
-        return msgs.format("to.str.public_key_info", publicKey, iv);
-    }
-
     public @NotNull String getIv() {
         return iv;
     }
 
     public @NotNull String getPublicKey() {
         return publicKey;
+    }
+
+    public @Override int hashCode() {
+        return Objects.hash(publicKey, iv);
+    }
+
+    public @Override String toString() {
+        return msgs.format("to.str.public_key_info", publicKey, iv);
     }
 
     private boolean _equals(@NotNull PublicKeyInfo that) {
