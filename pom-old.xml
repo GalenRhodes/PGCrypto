@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,8 +22,8 @@
         <project.build.resources.dir>${project.build.module.src.dir}/resources</project.build.resources.dir>
         <project.build.metainf.dir>${project.build.module.src.dir}/META-INF</project.build.metainf.dir>
         <project.build.jarclasses.dir>${project.build.directory}/jars-classes</project.build.jarclasses.dir>
-        <app.base.path>com/projectgalen/lib/crypto</app.base.path>
-        <app.base.package>com.projectgalen.lib.crypto</app.base.package>
+        <app.base.path>com/projectgalen/lib/utils</app.base.path>
+        <app.base.package>com.projectgalen.lib.utils</app.base.package>
         <props2xml.jar.path>${project.basedir}/utils/PropertiesToXML-1.0.0.jar</props2xml.jar.path>
     </properties>
 

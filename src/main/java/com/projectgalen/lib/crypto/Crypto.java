@@ -35,22 +35,20 @@ public final class Crypto {
         iv            = new IvParameterSpec(decryptBytes(secretKey, publicKeyInfo.getIv()));
     }
 
-    public @Override String toString() {
-        StringBuilder sb = new StringBuilder();
-        String        f1 = props.getProperty("to.str.fmt1");
-        String        f2 = props.getProperty("to.str.fmt2");
+    public @NotNull String decrypt(@NotNull String base64EncodedCipherText) throws GeneralSecurityException {
+        return decryptData(secretKey, iv, base64EncodedCipherText);
+    }
 
-        sb.append(String.format(f1, msgs.getString("msg.label.provider"), props.getProperty("crypto.bouncy-castle.provider"))).append("; ");
-        sb.append(String.format(f1, msgs.getString("msg.label.public_key_info"), publicKeyInfo)).append("; ");
-        sb.append(String.format(f2, msgs.getString("msg.label.iv_length"), props.getInt("crypto.iv.length"))).append("; ");
-        sb.append(String.format(f1, msgs.getString("msg.label.aes_algorithm"), props.getProperty("crypto.aes.algorithm"))).append("; ");
-        sb.append(String.format(f2, msgs.getString("msg.label.aes_key_length"), props.getInt("crypto.aes.key_length"))).append("; ");
-        sb.append(String.format(f1, msgs.getString("msg.label.aes_transform"), props.getProperty("crypto.aes.transformation.with_iv"))).append("; ");
-        sb.append(String.format(f1, msgs.getString("msg.label.aes_transform_no_iv"), props.getProperty("crypto.aes.transformation.no_iv"))).append("; ");
-        sb.append(String.format(f1, msgs.getString("msg.label.diffie_hellman_algorithm"), props.getProperty("crypto.diffie_hellman.algorithm"))).append("; ");
-        sb.append(String.format(f2, msgs.getString("msg.label.diffie_hellman_key_length"), props.getInt("crypto.diffie_hellman.key_length"))).append(';');
+    public byte @NotNull [] decryptBytes(@NotNull String base64EncodedCipherText) throws GeneralSecurityException {
+        return decryptBytes(secretKey, iv, base64EncodedCipherText);
+    }
 
-        return sb.toString();
+    public @NotNull String encrypt(@NotNull String str) throws GeneralSecurityException {
+        return encryptData(secretKey, iv, str);
+    }
+
+    public @NotNull String encrypt(byte @NotNull [] data) throws GeneralSecurityException {
+        return encryptData(secretKey, iv, data);
     }
 
     public IvParameterSpec getIv() {
@@ -69,24 +67,22 @@ public final class Crypto {
         return secretKey;
     }
 
-    public static @NotNull Provider getProvider() {
-        return Security.getProvider(props.getProperty("crypto.bouncy-castle.provider"));
-    }
+    public @Override @NotNull String toString() {
+        StringBuilder sb = new StringBuilder();
+        String        f1 = props.getProperty("to.str.fmt1");
+        String        f2 = props.getProperty("to.str.fmt2");
 
-    public @NotNull String decrypt(@NotNull String base64EncodedCipherText) throws GeneralSecurityException {
-        return decryptData(secretKey, iv, base64EncodedCipherText);
-    }
+        sb.append(String.format(f1, msgs.getString("msg.label.provider"), props.getProperty("crypto.bouncy-castle.provider"))).append("; ");
+        sb.append(String.format(f1, msgs.getString("msg.label.public_key_info"), publicKeyInfo)).append("; ");
+        sb.append(String.format(f2, msgs.getString("msg.label.iv_length"), props.getInt("crypto.iv.length"))).append("; ");
+        sb.append(String.format(f1, msgs.getString("msg.label.aes_algorithm"), props.getProperty("crypto.aes.algorithm"))).append("; ");
+        sb.append(String.format(f2, msgs.getString("msg.label.aes_key_length"), props.getInt("crypto.aes.key_length"))).append("; ");
+        sb.append(String.format(f1, msgs.getString("msg.label.aes_transform"), props.getProperty("crypto.aes.transformation.with_iv"))).append("; ");
+        sb.append(String.format(f1, msgs.getString("msg.label.aes_transform_no_iv"), props.getProperty("crypto.aes.transformation.no_iv"))).append("; ");
+        sb.append(String.format(f1, msgs.getString("msg.label.diffie_hellman_algorithm"), props.getProperty("crypto.diffie_hellman.algorithm"))).append("; ");
+        sb.append(String.format(f2, msgs.getString("msg.label.diffie_hellman_key_length"), props.getInt("crypto.diffie_hellman.key_length"))).append(';');
 
-    public byte @NotNull [] decryptBytes(@NotNull String base64EncodedCipherText) throws GeneralSecurityException {
-        return decryptBytes(secretKey, iv, base64EncodedCipherText);
-    }
-
-    public @NotNull String encrypt(@NotNull String str) throws GeneralSecurityException {
-        return encryptData(secretKey, iv, str);
-    }
-
-    public @NotNull String encrypt(byte @NotNull [] data) throws GeneralSecurityException {
-        return encryptData(secretKey, iv, data);
+        return sb.toString();
     }
 
     public static byte @NotNull [] createSHA256Digest(byte @NotNull [] secretBytes) throws NoSuchAlgorithmException {
@@ -200,11 +196,11 @@ public final class Crypto {
         return keyGenerator.generateKey();
     }
 
-    public static @NotNull String getBase64EncodedPublicKey(KeyPair keyPair) {
+    public static @NotNull String getBase64EncodedPublicKey(@NotNull KeyPair keyPair) {
         return Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
     }
 
-    public static @NotNull String getBase64EncodedSecretKey(SecretKey secretKey) {
+    public static @NotNull String getBase64EncodedSecretKey(@NotNull SecretKey secretKey) {
         return Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }
 
@@ -212,6 +208,10 @@ public final class Crypto {
         KeyAgreement keyAgree = KeyAgreement.getInstance(props.getProperty("crypto.diffie_hellman.algorithm"), props.getProperty("crypto.bouncy-castle.provider"));
         keyAgree.init(privateKey);
         return keyAgree;
+    }
+
+    public static @NotNull Provider getProvider() {
+        return Security.getProvider(props.getProperty("crypto.bouncy-castle.provider"));
     }
 
     public static byte @NotNull [] getRandom(int size) {
