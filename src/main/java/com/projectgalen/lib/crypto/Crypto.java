@@ -2,7 +2,7 @@ package com.projectgalen.lib.crypto;
 
 import com.projectgalen.lib.utils.PGProperties;
 import com.projectgalen.lib.utils.PGResourceBundle;
-import com.projectgalen.lib.utils.U;
+import com.projectgalen.lib.utils.text.Text;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,7 +94,7 @@ public final class Crypto {
     }
 
     public static @NotNull SecretKey createSecreteKeyFromDigest(String encDigest) {
-        return createSecretKeyFromDigest(U.base64Decode(encDigest));
+        return createSecretKeyFromDigest(Text.base64Decode(encDigest));
     }
 
     public static @NotNull SecretKey createSharedSecret(@NotNull PrivateKey privateKey, @NotNull String strPublicKeyEnc) throws GeneralSecurityException {
@@ -110,7 +110,7 @@ public final class Crypto {
     }
 
     public static byte @NotNull [] createSharedSecretDigest(@NotNull PrivateKey privateKey, @NotNull String publicKeyStr) throws GeneralSecurityException {
-        return createSharedSecretDigest(privateKey, U.base64Decode(publicKeyStr));
+        return createSharedSecretDigest(privateKey, Text.base64Decode(publicKeyStr));
     }
 
     public static byte @NotNull [] createSharedSecretDigest(@NotNull PrivateKey privateKey, byte @NotNull [] publicKeyBytes) throws GeneralSecurityException {
@@ -131,11 +131,11 @@ public final class Crypto {
     }
 
     public static byte @NotNull [] decryptBytes(@NotNull SecretKey secretKey, @NotNull String cipherText) throws GeneralSecurityException {
-        return decryptBytes(secretKey, U.base64Decode(cipherText));
+        return decryptBytes(secretKey, Text.base64Decode(cipherText));
     }
 
     public static byte @NotNull [] decryptBytes(@NotNull SecretKey secretKey, @NotNull IvParameterSpec iv, @NotNull String cipherText) throws GeneralSecurityException {
-        return decryptBytes(secretKey, iv, U.base64Decode(cipherText));
+        return decryptBytes(secretKey, iv, Text.base64Decode(cipherText));
     }
 
     public static byte @NotNull [] decryptBytes(@NotNull SecretKey secretKey, @NotNull IvParameterSpec iv, byte @NotNull [] cipherTextData) throws GeneralSecurityException {
@@ -145,7 +145,7 @@ public final class Crypto {
     }
 
     public static @NotNull String decryptData(@NotNull SecretKey secretKey, @NotNull IvParameterSpec iv, @NotNull String cipherText) throws GeneralSecurityException {
-        return decryptData(secretKey, iv, U.base64Decode(cipherText));
+        return decryptData(secretKey, iv, Text.base64Decode(cipherText));
     }
 
     public static @NotNull String decryptData(@NotNull SecretKey secretKey, @NotNull IvParameterSpec iv, byte @NotNull [] cipherTextData) throws GeneralSecurityException {
@@ -153,7 +153,7 @@ public final class Crypto {
     }
 
     public static @NotNull String decryptData(@NotNull SecretKey secretKey, @NotNull String cipherText) throws GeneralSecurityException {
-        return decryptData(secretKey, U.base64Decode(cipherText));
+        return decryptData(secretKey, Text.base64Decode(cipherText));
     }
 
     public static @NotNull String decryptData(@NotNull SecretKey secretKey, byte @NotNull [] cipherTextData) throws GeneralSecurityException {
